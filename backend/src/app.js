@@ -13,6 +13,7 @@ app.use((req, res, next) => {
     const allowedOrigins = new Set([
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        process.env.ALLOWED_ORIGIN
     ]);
 
     if(allowedOrigins.has(origin)){
