@@ -53,9 +53,10 @@ async function createUser(req,res){
 // Helper function
 const cookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict"
-}
+    secure: true,        // Required for HTTPS
+    sameSite: "none",    // REQUIRED for cross-origin (Frontend <-> Backend)
+    path: "/"            // Ensures the cookie is sent for all API routes
+};
 async function createLogin(req, res){
 
     try{

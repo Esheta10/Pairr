@@ -13,10 +13,11 @@ app.use((req, res, next) => {
     const allowedOrigins = new Set([
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        process.env.ALLOWED_ORIGIN
+        "https://pairr-ui.onrender.com" // Replace with your actual frontend URL
     ]);
 
-    if(allowedOrigins.has(origin)){
+    // Only set the header if the origin is in our allowed list
+    if (origin && allowedOrigins.has(origin)) {
         res.setHeader("Access-Control-Allow-Origin", origin);
         res.setHeader("Access-Control-Allow-Credentials", "true");
     }
@@ -24,12 +25,12 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-    if(req.method === "OPTIONS"){
+    if (req.method === "OPTIONS") {
         return res.sendStatus(204);
     }
 
     next();
-})
+});
 
 
 app.use("/api/auth", authRouter);
