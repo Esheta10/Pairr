@@ -1,34 +1,34 @@
-## auth routes - /api/auth
+Pairr API Documentation
+1. Authentication Routes (/api/auth)
+POST /signup: Register a new user.
 
-- POST /signup
-- POST /login
-- GET /logout
-- GET /refresh-token
+POST /login: Authenticate an existing user.
 
-## profile routes - /api/profile
+GET /logout: Terminate the user session.
 
-- GET /view
-- POST /edit
-- POST /password
+GET /refresh-token: Renew the authentication token.
 
-## connection routes - /api/request
+2. Profile Routes (/api/profile)
+GET /view: Retrieve the current user's profile details.
 
-- status options: ["interested", "ignore", "accept", "reject"]
+POST /edit: Update profile information.
 
-- POST /request/send/interested/:userId
-- POST /request/send/ignore/:userId
+POST /password: Change account password.
 
-- POST /request/review/accept/:requestId
-- POST /request/review/reject/:requestId
+3. Connection Request Routes (/api/request)
+Valid status options: interested, ignore, accept, reject
 
+POST /request/send/interested/:userId: Mark a user as "interested."
 
-## user routes - /api/user
+POST /request/send/ignore/:userId: Mark a user as "ignore."
 
-### fetches all the pending requests with status as "interested"
-- GET /user/requests/received
+POST /request/review/accept/:requestId: Accept a pending request.
 
-### fetches all the connection requests which we have accepted as well as the ones which were accepted by the receivers(toUser) we sent it to
-- GET /user/connnections
+POST /request/review/reject/:requestId: Reject a pending request.
 
-#### get feed of all the users who are not my connections but are present in app
-- GET /user/feed
+4. User Data Routes (/api/user)
+GET /user/requests/received: Fetches all pending requests with status "interested."
+
+GET /user/connnections: Fetches all successfully connected users (accepted by both parties).
+
+GET /user/feed: Gets a feed of all users who are not current connections but are present in the app.
