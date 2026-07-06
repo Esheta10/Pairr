@@ -1,24 +1,33 @@
-# DevTinder frontend
+# Pairr Frontend
 
-React frontend for the DevTinder backend, bundled with Vite.
+Welcome to the **Pairr** frontend! This project is a modern, responsive web application built with **React** and bundled using **Vite** for an optimized development experience.
 
-## Run
+---
 
-Start the backend:
+## 🚀 Getting Started
 
-```powershell
-cd D:\NodeJS\10-DevTinder\backend
-npm.cmd start
-```
+To get the application up and running locally, please ensure you have both the backend and frontend servers running.
 
-Start the frontend:
+### 1. Launch the Backend
+Navigate to your backend directory and start the server:
 
 ```powershell
-cd D:\NodeJS\10-DevTinder\frontend
-npm.cmd install
-npm.cmd run dev
+cd D:\Pairr\backend
+npm start
+
+```
+---
+
+## Launch the Frontend
+
+In a new terminal window, navigate to your frontend directory, install the necessary dependencies, and start the development server:
+
+```powershell
+cd D:\Pairr\frontend
+npm install
+npm run dev
 ```
 
-Open the Vite URL, usually `http://localhost:5173`.
+## Access the Application
 
-The app defaults to `/api`, and Vite proxies `/api` to `http://localhost:5500` during development.
+Once the development server is active, open your browser and navigate to the local development URL provided in your terminal (typically http://localhost:5173).

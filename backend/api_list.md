@@ -1,34 +1,25 @@
-## auth routes - /api/auth
+# Pairr API Documentation
 
-- POST /signup
-- POST /login
-- GET /logout
-- GET /refresh-token
+## 1. Authentication Routes (/api/auth)
+* **POST** `/signup`: Register a new user.
+* **POST** `/login`: Authenticate an existing user.
+* **GET** `/logout`: Terminate the user session.
+* **GET** `/refresh-token`: Renew the authentication token.
 
-## profile routes - /api/profile
+## 2. Profile Routes (/api/profile)
+* **GET** `/view`: Retrieve the current user's profile details.
+* **POST** `/edit`: Update profile information.
+* **POST** `/password`: Change account password.
 
-- GET /view
-- POST /edit
-- POST /password
+## 3. Connection Request Routes (/api/request)
+*Valid status options: `interested`, `ignore`, `accept`, `reject`*
 
-## connection routes - /api/request
+* **POST** `/request/send/interested/:userId`: Mark a user as "interested."
+* **POST** `/request/send/ignore/:userId`: Mark a user as "ignore."
+* **POST** `/request/review/accept/:requestId`: Accept a pending request.
+* **POST** `/request/review/reject/:requestId`: Reject a pending request.
 
-- status options: ["interested", "ignore", "accept", "reject"]
-
-- POST /request/send/interested/:userId
-- POST /request/send/ignore/:userId
-
-- POST /request/review/accept/:requestId
-- POST /request/review/reject/:requestId
-
-
-## user routes - /api/user
-
-### fetches all the pending requests with status as "interested"
-- GET /user/requests/received
-
-### fetches all the connection requests which we have accepted as well as the ones which were accepted by the receivers(toUser) we sent it to
-- GET /user/connnections
-
-#### get feed of all the users who are not my connections but are present in app
-- GET /user/feed
+## 4. User Data Routes (/api/user)
+* **GET** `/user/requests/received`: Fetches all pending requests with status "interested."
+* **GET** `/user/connections`: Fetches all successfully connected users (accepted by both parties).
+* **GET** `/user/feed`: Gets a feed of all users who are not current connections but are present in the app.
