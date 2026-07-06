@@ -2,8 +2,8 @@
 
 **Pairr** is a high-performance professional networking platform designed to bridge the gap between talented individuals and meaningful collaboration. In a world where connection is key, Pairr provides a sleek, modern interface for professionals to discover, connect, and grow their networks efficiently.
 
-![Pairr Dashboard Preview]("<img width="1348" height="595" alt="image" src="https://github.com/user-attachments/assets/e6eb67b8-fce3-4dac-b2f8-a427a988b2ab" />
-")
+<img width="1348" height="595" alt="image" src="https://github.com/user-attachments/assets/e6eb67b8-fce3-4dac-b2f8-a427a988b2ab" />
+
 
 ### Why Pairr?
 Pairr was built with the developer experience in mind. It moves beyond traditional networking by offering:
