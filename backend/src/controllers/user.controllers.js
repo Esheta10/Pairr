@@ -73,7 +73,8 @@ async function createLogin(req, res){
         // if(!isPasswordValid){
         //     return res.status(400).json({message: "Invalid credentials"})
         // }
-
+        // Backend Code
+        console.log("Backend received email:", req.body.email);
         const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
         const isPasswordValid = hashedPassword === user.password;
         if(!isPasswordValid){
