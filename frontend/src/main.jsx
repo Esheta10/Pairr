@@ -120,20 +120,26 @@ function App() {
     ["settings", "Settings"],
   ], []);
 
-  async function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
-    try {
-      const payload = await apiRequest("/auth/login", {
-        method: "POST",
-        body: JSON.stringify(toPayload(event.currentTarget)),
-      });
-      saveToken(payload.accessToken);
-      notify(payload.message || "Logged in");
-    } catch (error) {
-      notify(error.message, "error");
-    }
-  }
+    
+    // Debugging: Get the data manually to see if it's there
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+    console.log("Raw Form Data:", data); 
 
+    try {
+        const payload = await apiRequest("/auth/login", {
+            method: "POST",
+            body: JSON.stringify(data), // Send the raw data
+        });
+        saveToken(payload.accessToken);
+        notify(payload.message || "Logged in");
+    } catch (error) {
+        console.error("Login failed:", error);
+        notify(error.message, "error");
+    }
+}
   async function handleSignup(event) {
     event.preventDefault();
     try {
