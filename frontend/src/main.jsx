@@ -113,7 +113,7 @@ function App() {
 
   const navItems = useMemo(() => [
     ["feed", "Feed"],
-    ["discover", "Discover"],
+    // ["discover", "Discover"],
     ["requests", "Requests"],
     ["connections", "Connections"],
     ["profile", "Profile"],
