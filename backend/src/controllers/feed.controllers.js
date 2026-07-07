@@ -35,7 +35,7 @@ async function userConnections(req,res){
         const connectionRequests = await connectionRequestModel.find({
             $or: [
                 {   fromUserId: loggedInUser._id,
-                    status: "accepted",
+                    status: "accept",
                 },
                 {
                     toUserId: loggedInUser._id,
@@ -65,39 +65,52 @@ async function userConnections(req,res){
     }
 }
 
-async function getPublicFeed(req, res){
-
+async function getPublicFeed(req, res) {
     try {
-
         const loggedInUser = req.user;
+        const page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
+        limit = limit > 50 ? 50 : limit;
+        const skip = (page - 1) * limit;
 
-        const connectionRequest = await connectionRequestModel.find({
-            $or: [
-                {fromUserId: loggedInUser._id},
-                {toUserId: loggedInUser._id}
-            ]
-        }).select("fromUserId toUserId")
+        // 1. Get all requests associated with the user
+        const connectionRequests = await connectionRequestModel.find({
+            $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }]
+        }).select("fromUserId toUserId");
 
+        // 2. Build the exclusion list
         const hideUsersFromFeed = new Set();
-        connectionRequest.forEach((req) => {
-            hideUsersFromFeed.add(req.toUserId.toString()),
-            hideUsersFromFeed.add(req.fromUserId.toString())
-        })
+        connectionRequests.forEach((req) => {
+            hideUsersFromFeed.add(req.toUserId.toString());
+            hideUsersFromFeed.add(req.fromUserId.toString());
+        });
+        hideUsersFromFeed.add(loggedInUser._id.toString());
 
-        const newUsers = await userModel.find({
-            $and: [
-                { _id: { $nin: Array.from(hideUsersFromFeed)}},
-                { _id: { $ne: loggedInUser._id}},
-            ]
-        }). select("firstName lastName age photoURL")
+        // 3. Define the filter as an OBJECT (The proper MongoDB query)
+        const filter = {
+            _id: { $nin: Array.from(hideUsersFromFeed) }
+        };
+
+        // 4. Fetch the paginated data
+        const newUsers = await userModel.find(filter)
+            .select("firstName lastName age photoURL")
+            .skip(skip)
+            .limit(limit);
+
+        // 5. Count total remaining users for this specific user
+        const total = await userModel.countDocuments(filter);
 
         res.status(200).json({
-            newUsers
-        })
-    } catch(error){
-        res.status(400).json(error.message)
+            newUsers,
+            page,
+            limit,
+            hasMore: skip + newUsers.length < total,
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 }
+
 async function findUserById(req,res){
 
     try{
@@ -132,8 +145,8 @@ async function deleteUserById(req,res){
         const id = req.params.id;
 
         const user = await userModel.deleteOne({ _id: id})
-        if(!user){
-            res.status(400).json({meaasge: "User does not exist"})
+        if(user.deletedCount===0){
+            return res.status(400).json({meaasge: "User does not exist"})
         }
 
         res.status(200).json({
