@@ -5,6 +5,7 @@ import "./styles.css";
 const DEFAULT_API_BASE = "https://pairr-h11h.onrender.com/api";
 const DEFAULT_PHOTO =
   "https://static.vecteezy.com/system/resources/thumbnails/051/498/303/small/social-media-chatting-online-default-male-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg";
+const FEED_LIMIT = 10;
 
 function toPayload(form) {
   const data = Object.fromEntries(new FormData(form).entries());
@@ -28,6 +29,9 @@ function App() {
   const [requests, setRequests] = useState([]);
   const [connections, setConnections] = useState([]);
   const [feed, setFeed] = useState([]);
+  const [feedPage, setFeedPage] = useState(1);
+  const [feedHasMore, setFeedHasMore] = useState(true);
+  const [feedLoadingMore, setFeedLoadingMore] = useState(false);
   const [discoverUser, setDiscoverUser] = useState(null);
   const [discoverMessage, setDiscoverMessage] = useState("Search by user id to view a profile and send interest or ignore.");
   const signedIn = Boolean(accessToken);
@@ -93,9 +97,23 @@ function App() {
     setConnections(data.data || []);
   }
 
-  async function loadFeed() {
-    const data = await apiRequest("/user/feed");
-    setFeed(data.newUsers || data.data || data.users || (Array.isArray(data) ? data : []));
+  async function loadFeed(page = 1, append = false) {
+    const data = await apiRequest(`/user/feed?page=${page}&limit=${FEED_LIMIT}`);
+    const newUsers = data.newUsers || [];
+    setFeed((current) => (append ? [...current, ...newUsers] : newUsers));
+    setFeedPage(data.page || page);
+    setFeedHasMore(Boolean(data.hasMore));
+  }
+
+  async function loadMoreFeed() {
+    setFeedLoadingMore(true);
+    try {
+      await loadFeed(feedPage + 1, true);
+    } catch (error) {
+      notify(error.message, "error");
+    } finally {
+      setFeedLoadingMore(false);
+    }
   }
 
   async function loadDashboard() {
@@ -120,26 +138,20 @@ function App() {
     ["settings", "Settings"],
   ], []);
 
-async function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault();
-    
-    // Debugging: Get the data manually to see if it's there
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    console.log("Raw Form Data:", data); 
-
     try {
-        const payload = await apiRequest("/auth/login", {
-            method: "POST",
-            body: JSON.stringify(data), // Send the raw data
-        });
-        saveToken(payload.accessToken);
-        notify(payload.message || "Logged in");
+      const payload = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(toPayload(event.currentTarget)),
+      });
+      saveToken(payload.accessToken);
+      notify(payload.message || "Logged in");
     } catch (error) {
-        console.error("Login failed:", error);
-        notify(error.message, "error");
+      notify(error.message, "error");
     }
-}
+  }
+
   async function handleSignup(event) {
     event.preventDefault();
     try {
@@ -273,7 +285,17 @@ async function handleLogin(event) {
           </header>
           <Toast toast={toast} />
 
-          {activeView === "feed" && <FeedView feed={feed} onRefresh={loadFeed} onSendRequest={sendRequest} notify={notify} />}
+          {activeView === "feed" && (
+            <FeedView
+              feed={feed}
+              onRefresh={loadFeed}
+              onSendRequest={sendRequest}
+              notify={notify}
+              onLoadMore={loadMoreFeed}
+              hasMore={feedHasMore}
+              loadingMore={feedLoadingMore}
+            />
+          )}
           {activeView === "discover" && (
             <DiscoverView discoverUser={discoverUser} message={discoverMessage} onFindUser={findUser} onRefreshProfile={() => loadProfile().then(() => notify("Profile refreshed")).catch((error) => notify(error.message, "error"))} onSendRequest={sendRequest} />
           )}
@@ -328,7 +350,7 @@ function SignupForm({ onSubmit }) {
   );
 }
 
-function FeedView({ feed, onRefresh, onSendRequest, notify }) {
+function FeedView({ feed, onRefresh, onSendRequest, notify, onLoadMore, hasMore, loadingMore }) {
   async function refresh() {
     try {
       await onRefresh();
@@ -360,6 +382,13 @@ function FeedView({ feed, onRefresh, onSendRequest, notify }) {
           />
         )) : <EmptyState message="No new profiles right now. Check back later." />}
       </div>
+      {feed.length > 0 && hasMore && (
+        <div className="load-more-row">
+          <button className="secondary-action" onClick={onLoadMore} disabled={loadingMore} type="button">
+            {loadingMore ? "Loading..." : "Load more"}
+          </button>
+        </div>
+      )}
     </section>
   );
 }
