@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 
-const DEFAULT_API_BASE = "https://pairr-h11h.onrender.com/api";
+const DEFAULT_API_BASE = "https://pairr-lkgy.vercel.app/api";
 const DEFAULT_PHOTO =
   "https://static.vecteezy.com/system/resources/thumbnails/051/498/303/small/social-media-chatting-online-default-male-blank-profile-picture-head-and-body-icon-people-standing-icon-grey-background-free-vector.jpg";
 const FEED_LIMIT = 10;
