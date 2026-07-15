@@ -13,7 +13,7 @@ app.use((req, res, next) => {
     const allowedOrigins = new Set([
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "https://pairr-ui.onrender.com" // Replace with your actual frontend URL
+        "https://pairr-hazel.vercel.app/" // Replace with your actual frontend URL
     ]);
 
     // Only set the header if the origin is in our allowed list
